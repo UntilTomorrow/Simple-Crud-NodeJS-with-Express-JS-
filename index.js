@@ -48,10 +48,37 @@ app.get('/',(req, res) => {
     });
   });
 });
+
+//route for homepage
+app.get('/',(req, res) => {
+  let sql = "SELECT * FROM product";
+  let query = conn.query(sql, (err, results) => {
+    if(err) throw err;
+    res.render('add',{
+      url: 'http//localhost:8000/',
+      data: results
+    });
+  });
+});
+
+//route for Form add 
+
+app.get('/add', (req, res)=> {
+    res.render('add', {
+    url: 'http//localhost:8000/',
+    Name:'',
+    Price:''
+    });
+
+});
+
+
+
+////////////////////////////////route Action Here //////////////////////////
  
 //route for action insert data
-app.post('/save',(req, res) => {
-  let data = {product_name: req.body.product_name, product_price: req.body.product_price};
+app.post('/add/save',(req, res) => {
+  let data = { product_name: req.body.Name, product_price: req.body.Price};
   let sql = "INSERT INTO product SET ?";
   let query = conn.query(sql, data,(err, results) => {
     if(err) throw err;
