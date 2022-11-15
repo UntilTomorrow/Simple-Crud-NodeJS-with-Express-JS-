@@ -42,7 +42,7 @@ app.get('/',(req, res) => {
   let sql = "SELECT * FROM product";
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
-    res.render('product_view',{
+    res.render('store',{
       url: 'http//localhost:8000/',
       data: results
     });
