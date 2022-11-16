@@ -72,6 +72,18 @@ app.get('/add', (req, res)=> {
 
 });
 
+//route for Form Update 
+
+app.get('/edit', (req, res)=> {
+  res.render('edit', {
+  url: 'http//localhost:8000/',
+  Name:'',
+  Price:''
+  });
+
+});
+
+
 
 
 ////////////////////////////////route Action Here //////////////////////////
@@ -87,8 +99,8 @@ app.post('/add/save',(req, res) => {
 });
  
 //route for action update data
-app.post('/update',(req, res) => {
-  let sql = "UPDATE product SET product_name='"+req.body.product_name+"', product_price='"+req.body.product_price+"' WHERE product_id="+req.body.id;
+app.post('/edit/update',(req, res) => {
+  let sql = "UPDATE product SET product_name='"+req.body.name+"', product_price='"+req.body.price+"' WHERE id="+req.body.id;
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
     res.redirect('/');
@@ -96,11 +108,29 @@ app.post('/update',(req, res) => {
 });
  
 //route for action delete data
-app.post('/delete',(req, res) => {
-  let sql = "DELETE FROM product WHERE product_id="+req.body.product_id+"";
-  let query = conn.query(sql, (err, results) => {
-    if(err) throw err;
-      res.redirect('/');
+app.post('/delete/(:id)',(req, res) => {
+  const querySearch = 'SELECT * FROM product WHERE id = ?';
+  const querydelete = 'DELETE FROM product WHERE id = ?';
+
+
+  let query = conn.query(querySearch, req.params.id,(err, rows, field) => {
+    if(err) {
+      return res.status(500).json({ message: 'What Wrong', error: err });
+        }
+
+    if (rows.length) {
+      let query = conn.query(querydelete, req.params.id, (err, rows, field) => {
+          if(err){
+              return res.status(500).json({message: 'what wrong', error: err });
+          }
+
+          res.redirect('/');
+
+      });
+
+      } else {
+          return res.status(404).json({ message: 'Data tidak ditemukan!', success: false });
+      }
   });
 });
  
@@ -109,3 +139,5 @@ app.post('/delete',(req, res) => {
 app.listen(8000, () => {
   console.log('Server is running at port 8000');
 });
+
+
